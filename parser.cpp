@@ -109,8 +109,11 @@ int parse_command_line(int argc, char **argv)
   else if (argc == 3)
     {
       // ./a.out start_primes number_of_primes
+      double dt = clock();
       scan_p (argv[1], argv[2]);
       compute_r();
+      dt = (clock() - dt) / CLOCKS_PER_SEC;
+      printf ("Calculation of %d prime numbers since %d value %e sec\n",atoi (argv[2]), atoi (argv[1]), dt);
     }
 #if PRINTS
   print_p ();
