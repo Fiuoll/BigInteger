@@ -36,7 +36,9 @@ public:
           {
             x[i] = (x[i] - x[j]) * inverted_pi_mod_pj[j][i];
 
-            x[i] = (x[i] + primes[i]) % primes[i];
+            x[i] = x[i] % primes[i];
+            if (x[i] < 0)
+              x[i] += primes[i];
           }
       }
     for (unsigned int i = 0; i < PRIME_BASE; i++)

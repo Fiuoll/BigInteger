@@ -342,11 +342,11 @@ int main(int argc, char **argv)
 
       // количество процессов
       global_size = PRIME_BASE; // всего процессов WORKITEM
-      local_size = wgSzMin > 4 ? 4 : wgSzMin;      // количество процессов в одной WORKGROUP
+      local_size = wgSzMin > global_size ? global_size : wgSzMin;      // количество процессов в одной WORKGROUP
       fprintf(stdout,"run kernel, work items: %ld, workgroup size: %ld\n", global_size, local_size);
 
       // запускаем ядро
-      clStatus = clEnqueueNDRangeKernel(command_queue, kernel, 1, nullptr, &global_size, &local_size, 0, nullptr, &kernel_event);
+      clStatus = clEnqueueNDRangeKernel(command_queue, kernel, 1, nullptr, &global_size, nullptr, 0, nullptr, &kernel_event);
       CL_CATCH_ERROR(clStatus,"clEnqueueNDRangeKernel");
 
       // считываем результат
