@@ -8,7 +8,7 @@
 using namespace std;
 
 #define DEBUG_PRINT 0
-#define DEBUG_CHECK 1
+#define DEBUG_CHECK 0
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #define CL_CATCH_ERROR( CODE, MSG ) \
@@ -19,10 +19,10 @@ using namespace std;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 const char *kernel_src=
-"__kernel void kernel1( __global int *A, __global int *B, __global int *P, __global int *C, const int flag) {\n"
+"__kernel void kernel1( __global unsigned long int *A, __global unsigned long int *B, __global int *P, __global unsigned long int *C, const int flag) {\n"
 "    int idx = get_global_id(0); \n"
 "    if (flag)\n"
-"      C[idx] =(A[idx] * B[idx]) % P[idx];\n "
+"      C[idx] =  (A[idx] * B[idx]) % P[idx];\n "
 "    else\n"
 "      C[idx] = (A[idx] + B[idx]) % P[idx];\n"
 "}";
@@ -182,13 +182,13 @@ int main(int argc, char **argv)
   CL_CATCH_ERROR(clStatus,"error clCreateKernel" );
 
   // выделяем память device для данных
-  clA = clCreateBuffer(context, CL_MEM_READ_ONLY, PRIME_BASE * sizeof(int), nullptr, &clStatus);
+  clA = clCreateBuffer(context, CL_MEM_READ_ONLY, PRIME_BASE * sizeof(uint64_t), nullptr, &clStatus);
   CL_CATCH_ERROR(clStatus,"error clCreateBuffer" );
-  clB = clCreateBuffer(context, CL_MEM_READ_ONLY, PRIME_BASE * sizeof(int), nullptr, &clStatus);
+  clB = clCreateBuffer(context, CL_MEM_READ_ONLY, PRIME_BASE * sizeof(uint64_t), nullptr, &clStatus);
   CL_CATCH_ERROR(clStatus,"error clCreateBuffer" );
-  clP = clCreateBuffer(context, CL_MEM_READ_ONLY, PRIME_BASE * sizeof(int), nullptr, &clStatus);
+  clP = clCreateBuffer(context, CL_MEM_READ_ONLY, PRIME_BASE * sizeof(uint64_t), nullptr, &clStatus);
   CL_CATCH_ERROR(clStatus,"error clCreateBuffer" );
-  clC = clCreateBuffer(context, CL_MEM_WRITE_ONLY, PRIME_BASE * sizeof(int), nullptr, &clStatus);
+  clC = clCreateBuffer(context, CL_MEM_WRITE_ONLY, PRIME_BASE * sizeof(uint64_t), nullptr, &clStatus);
   CL_CATCH_ERROR(clStatus,"error clCreateBuffer" );
 
   char buf1[1234];
@@ -267,16 +267,15 @@ int main(int argc, char **argv)
           break;
         case '*':
           cl_flag = 1;
-
           bic = bia * bib;
           break;
         default:
           printf ("%c\n", op);
           break;
         }
-      dt = (clock() - dt) / CLOCKS_PER_SEC;
+      dt = (clock() - dt) ;
       bic.print();
-      printf ("BigInt operation time: %.5f ms\n", dt * 10e+3);
+      printf ("BigInt operation time: %.5f ms\n", dt * 10e-3);
 
 #if DEBUG_PRINT
       BigUInt aaa = a.to_biguint();
@@ -292,7 +291,8 @@ int main(int argc, char **argv)
       bbb.print();
 #endif
 
-#if DEBUG_PRINT
+#if 1
+      dt = clock();
       switch (op)
         {
         case '+':
@@ -308,6 +308,8 @@ int main(int argc, char **argv)
           printf ("%c\n", op);
           break;
         }
+      dt = (clock() - dt) ;
+      printf ("ModUInt operation time: %.5f ms\n", dt * 10e-3);
 
       BigUInt ccc = c.to_biguint();
       printf ("%s %c %s = ", buf1, op, buf2);
@@ -324,9 +326,9 @@ int main(int argc, char **argv)
       CL_CATCH_ERROR(clStatus,"error clCreateCommandQueue" );
 
       // копируем данные в память DEVICE
-      clStatus = clEnqueueWriteBuffer(command_queue, clA, CL_TRUE, 0, PRIME_BASE * sizeof(int), a.data(), 0, nullptr, &kernel_event);
+      clStatus = clEnqueueWriteBuffer(command_queue, clA, CL_TRUE, 0, PRIME_BASE * sizeof(uint64_t), a.data(), 0, nullptr, &kernel_event);
       CL_CATCH_ERROR(clStatus,"clEnqueueWriteBuffer");
-      clStatus = clEnqueueWriteBuffer(command_queue, clB, CL_TRUE, 0, PRIME_BASE * sizeof(int), b.data(), 0, nullptr, &kernel_event);
+      clStatus = clEnqueueWriteBuffer(command_queue, clB, CL_TRUE, 0, PRIME_BASE * sizeof(uint64_t), b.data(), 0, nullptr, &kernel_event);
       CL_CATCH_ERROR(clStatus,"clEnqueueWriteBuffer");
       clStatus= clEnqueueWriteBuffer(command_queue, clP, CL_TRUE, 0, PRIME_BASE * sizeof(int), primes.data(), 0, nullptr, &kernel_event);
       CL_CATCH_ERROR(clStatus,"clEnqueueWriteBuffer");
@@ -337,7 +339,6 @@ int main(int argc, char **argv)
       clStatus |= clSetKernelArg(kernel, 2, sizeof(cl_mem), &clP);
       clStatus |= clSetKernelArg(kernel, 3, sizeof(cl_mem), &clC);
       clStatus |= clSetKernelArg(kernel, 4, sizeof(int), &cl_flag);
-//      clStatus = clStatus;
       CL_CATCH_ERROR(clStatus,"error clSetKernelArg");
 
       // количество процессов
@@ -350,7 +351,7 @@ int main(int argc, char **argv)
       CL_CATCH_ERROR(clStatus,"clEnqueueNDRangeKernel");
 
       // считываем результат
-      clStatus = clEnqueueReadBuffer(command_queue, clC, CL_TRUE, 0, PRIME_BASE * sizeof(int), c.data(), 1, &kernel_event, nullptr);
+      clStatus = clEnqueueReadBuffer(command_queue, clC, CL_TRUE, 0, PRIME_BASE * sizeof(uint64_t), c.data(), 1, &kernel_event, nullptr);
       CL_CATCH_ERROR(clStatus,"clEnqueueReadBuffer");
 
       // ждём завершения всех операций

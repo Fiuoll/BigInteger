@@ -47,12 +47,20 @@ ModUInt ModUInt::operator*(const ModUInt &a)
   return q;
 }
 
-int ModUInt::operator[](const unsigned int i) const
+ModUInt power (ModUInt &a, int n)
+{
+  ModUInt b = a;
+  for (int it = 0; it < n; it++)
+    b = b * a;
+  return b;
+}
+
+uint64_t ModUInt::operator[](const unsigned int i) const
 {
   return i < PRIME_BASE ? mui[i] : 0;
 }
 
-int &ModUInt::operator[](const unsigned int i)
+uint64_t &ModUInt::operator[](const unsigned int i)
 {
   return mui[i];
 }

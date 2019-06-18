@@ -13,15 +13,15 @@ using namespace std;
 class ModUInt
 {
 private:
-  vector<int> mui;
+  vector<uint64_t> mui;
 public:
   ModUInt (const BigUInt &a = BigUInt ());
   ModUInt (const ModUInt &a);
   ModUInt operator+ (const ModUInt &a);
   ModUInt operator- (const ModUInt &a);
   ModUInt operator* (const ModUInt &a);
-  int operator[] (const unsigned int i) const;
-  int &operator[] (const unsigned int i);
+  uint64_t operator[] (const unsigned int i) const;
+  uint64_t &operator[] (const unsigned int i);
 
   BigInt to_bigint ()
   {
@@ -56,7 +56,7 @@ public:
   {
     return to_bigint().to_biguint();
   }
-  int * data ()
+  uint64_t *data ()
   {
     return mui.data();
   }
