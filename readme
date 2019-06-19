@@ -1,0 +1,16 @@
+Hello!
+This program can compute simple operations like +, -, * with big integer values.
+Several method was realized:
+1 - BigInt class -- vector of digits of value with operations +, -, *
+2 - ModUInt class -- vector of reminder of division by prime values; prime values can be specified from file or can be computed several first prime numbers; operations +, *
+3 - ModUInt with OpenCL -- parallel realization 
+0 - all previous methods
+
+Input:
+<value> <operation> <value>
+For example:
+1 + 1
+99999999999999999999999999999999999999999999999 * 9999999999999999999999999999
+
+Compile:
+g++ ./*.cpp -lOpenCL

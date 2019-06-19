@@ -23,6 +23,12 @@ public:
   uint64_t operator[] (const unsigned int i) const;
   uint64_t &operator[] (const unsigned int i);
 
+  void clear ()
+  {
+    for (auto &val : mui)
+      val = 0;
+  }
+
   BigInt to_bigint ()
   {
     BigInt a;

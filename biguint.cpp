@@ -40,6 +40,7 @@ void BigUInt::init(const string string_of_digits)
 void BigUInt::print()
 {
   char buf[100];
+  clear_first_zeroes();
   sprintf (buf, "%%%02dd", NUMBER_OF_DIGITS_IN_BASE);
   //  printf ("%s\n",buf);
   printf ("%d", bui.empty() ? 0 : bui.back());
