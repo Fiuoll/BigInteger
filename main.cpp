@@ -19,7 +19,7 @@ using namespace std;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 const char *kernel_src=
-"__kernel void kernel1( __global unsigned long int *A, __global unsigned long int *B, __global int *P, __global unsigned long int *C, const int flag) {\n"
+"__kernel void kernel1( __global unsigned long long int *A, __global unsigned long long int *B, __global int *P, __global unsigned long long int *C, const int flag) {\n"
 "    int idx = get_global_id(0); \n"
 //"    int i = 0;\n"
 //"    for (;i < 100; i++)\n"
@@ -293,7 +293,7 @@ int main(int argc, char **argv)
               break;
             case '*':
               cl_flag = 1;
-              bic += bia * bib;
+              bic = bia * bib;
               break;
             default:
               printf ("%c is not supported\n", op);
@@ -330,7 +330,7 @@ int main(int argc, char **argv)
               break;
             case '*':
               c.clear();
-              c = c + a * b;
+              c = a * b;
               break;
             default:
               printf ("%c is not supported\n", op);
