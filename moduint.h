@@ -25,8 +25,8 @@ public:
 
   void clear ()
   {
-    for (auto &val : mui)
-      val = 0;
+    for (unsigned int i = 0; i < mui.size(); i++)
+      mui[i] = 0;
   }
 
   BigInt to_bigint ()

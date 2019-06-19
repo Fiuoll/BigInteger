@@ -273,6 +273,21 @@ int main(int argc, char **argv)
       scanf(" %c ", &op);
       scanf ("%s", buf2);
 
+      switch (op)
+        {
+        case '+':
+          cl_flag = 0;
+          break;
+        case '-':
+          break;
+        case '*':
+          cl_flag = 1;
+          break;
+        default:
+          printf ("%c is not supported\n", op);
+          break;
+        }
+
       bib = buf2;
       b = static_cast<BigUInt> (buf2);
 
@@ -284,7 +299,6 @@ int main(int argc, char **argv)
           switch (op)
             {
             case '+':
-              cl_flag = 0;
 
               bic = bia + bib;
               break;
@@ -292,7 +306,6 @@ int main(int argc, char **argv)
               bic = bia - bib;
               break;
             case '*':
-              cl_flag = 1;
               bic = bia * bib;
               break;
             default:
